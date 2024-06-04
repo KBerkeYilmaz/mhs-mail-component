@@ -8,7 +8,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-
 export function Nav({ links, isCollapsed }) {
   return (
     <div

@@ -7,16 +7,6 @@ const getCookie = (name) => {
   if (parts.length === 2) return parts.pop().split(";").shift();
 };
 
-// const setCookie = (name, value, days) => {
-//   let expires = "";
-//   if (days) {
-//     const date = new Date();
-//     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-//     expires = `; expires=${date.toUTCString()}`;
-//   }
-//   document.cookie = `${name}=${value || ""}${expires}; path=/`;
-// };
-
 export default function Home() {
   const [defaultLayout, setDefaultLayout] = useState(undefined);
   const [defaultCollapsed, setDefaultCollapsed] = useState(undefined);
@@ -31,7 +21,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="hidden flex-col md:flex">
+      <div className="hidden flex-col md:flex max-w-screen max-h-screen overflow-hidden">
         <Mail
           accounts={accounts}
           mails={mails}

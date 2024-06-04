@@ -1,17 +1,4 @@
 import * as React from "react";
-
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-
 import {
   AlertCircle,
   Archive,
@@ -42,26 +29,61 @@ import { MailList } from "@/components/mail-list";
 import { Nav } from "@/components/nav";
 import { accounts, mails } from "@/data/mails";
 import { useMail } from "@/components/use-mail";
+import NavbarFilters from "./NavbarFilters";
 
 const Mail = ({
-  // mails,
-  // accounts,
   defaultLayout = [265, 440, 655],
   defaultCollapsed = false,
   navCollapsedSize,
 }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   const [mail] = useMail();
-  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [labelFilters, setLabelFilters] = React.useState([]);
 
-  const table = useReactTable({
-    mails,
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      columnFilters,
-    },
-  });
+  const labels = mails.map((mail) => mail.labels);
+
+  const uniqueLabels = labels.reduce((acc, labelArray) => {
+    labelArray.forEach((label) => {
+      if (acc[label.toLowerCase()]) {
+        acc[label.toLowerCase()]++;
+      } else {
+        acc[label.toLowerCase()] = 1;
+      }
+    });
+    return acc;
+  }, {});
+
+  const uniqueLabelsArray = Object.keys(uniqueLabels).map((label) => ({
+    label: label.charAt(0).toUpperCase() + label.slice(1), // Capitalize the first letter
+    count: uniqueLabels[label],
+  }));
+
+  const handleFilterChange = (selectedLabels) => {
+    setLabelFilters(selectedLabels.map((label) => label.toLowerCase()));
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  let filteredMails = mails;
+
+  // First filter by labels if there are any selected
+  if (labelFilters.length > 0) {
+    filteredMails = filteredMails.filter((mail) =>
+      labelFilters.every((filter) =>
+        mail.labels.map((label) => label.toLowerCase()).includes(filter)
+      )
+    );
+  }
+
+  // Then filter by search query if there is any
+  if (searchQuery) {
+    filteredMails = filteredMails.filter((mail) =>
+      new RegExp(searchQuery, "i").test(mail.subject)
+    );
+  }
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -82,11 +104,15 @@ const Mail = ({
           maxSize={20}
           onCollapse={() => {
             setIsCollapsed(true);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(true)}`;
+            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
+              true
+            )}`;
           }}
           onExpand={() => {
             setIsCollapsed(false);
-            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(false)}`;
+            document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
+              false
+            )}`;
           }}
           className={cn(
             isCollapsed &&
@@ -110,7 +136,7 @@ const Mail = ({
             links={[
               {
                 title: "Inbox",
-                label: "128",
+                label: `${mails.length}`,
                 icon: Inbox,
                 variant: "default",
               },
@@ -126,60 +152,14 @@ const Mail = ({
                 icon: Send,
                 variant: "ghost",
               },
-            //   {
-            //     title: "Junk",
-            //     label: "23",
-            //     icon: ArchiveX,
-            //     variant: "ghost",
-            //   },
-            //   {
-            //     title: "Trash",
-            //     label: "",
-            //     icon: Trash2,
-            //     variant: "ghost",
-            //   },
-            //   {
-            //     title: "Archive",
-            //     label: "",
-            //     icon: Archive,
-            //     variant: "ghost",
-            //   },
             ]}
           />
           <Separator />
-          <div className="bg-background/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <form>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search"
-                  className="pl-8"
-                />
-              </div>
-            </form>
-          </div>
-          <div className="bg-background/95 px-4 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <form>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search"
-                  className="pl-8"
-                />
-              </div>
-            </form>
-          </div>
-          <div className="bg-background/95 px-4 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <form>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search"
-                  className="pl-8"
-                />
-              </div>
-            </form>
-          </div>
+          <NavbarFilters
+            labels={uniqueLabelsArray}
+            accounts={accounts}
+            onFilterChange={handleFilterChange}
+          />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel
@@ -212,6 +192,8 @@ const Mail = ({
                   <Input
                     placeholder="Search"
                     className="pl-8"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
                   />
                 </div>
               </form>
@@ -220,18 +202,18 @@ const Mail = ({
               value="all"
               className="m-0"
             >
-              <MailList items={mails} />
+              <MailList items={filteredMails} />
             </TabsContent>
             <TabsContent
               value="unread"
               className="m-0"
             >
-              <MailList items={mails.filter((item) => !item.read)} />
+              <MailList items={filteredMails.filter((item) => !item.read)} />
             </TabsContent>
           </Tabs>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[2]}>
+        <ResizablePanel defaultSize={defaultLayout[2]} minSize={28}>
           <MailDisplay
             mail={mails.find((item) => item.id === mail.selected) || null}
           />
