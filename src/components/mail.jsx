@@ -12,7 +12,9 @@ import {
   Trash2,
   Users2,
 } from "lucide-react";
-
+import {columns} from "@/components/LeadDataTable/columns";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable } from "components/LeadDataTable/data-table";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
@@ -202,7 +204,11 @@ const Mail = ({
               value="all"
               className="m-0"
             >
-              <MailList items={filteredMails} />
+              <DataTable
+                columns={columns}
+                data={mails}
+              />
+              {/* <MailList items={filteredMails} /> */}
             </TabsContent>
             <TabsContent
               value="unread"
@@ -213,7 +219,10 @@ const Mail = ({
           </Tabs>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[2]} minSize={28}>
+        <ResizablePanel
+          defaultSize={defaultLayout[2]}
+          minSize={28}
+        >
           <MailDisplay
             mail={mails.find((item) => item.id === mail.selected) || null}
           />
