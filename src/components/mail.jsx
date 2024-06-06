@@ -1,5 +1,13 @@
 import * as React from "react";
-import { File, Inbox, Send } from "lucide-react";
+import {
+  File,
+  Inbox,
+  Send,
+  Search,
+  Tags,
+  CircleUserRound,
+  ListOrdered,
+} from "lucide-react";
 import { columns } from "@/components/MailDataTable/columns";
 import { DataTable } from "components/MailDataTable/data-table";
 import { cn } from "@/lib/utils";
@@ -16,8 +24,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AccountSwitcher } from "@/components/account-switcher";
 import { MailDisplay } from "@/components/mail-display";
 import { Nav } from "@/components/nav";
-import { accounts, mails } from "@/data/mails";
-import { useMail } from "@/components/use-mail";
+import { accounts } from "@/data/mails";
 import NavbarFilters from "./NavbarFilters";
 
 function parseTasks(tasks) {
@@ -48,8 +55,6 @@ const Mail = ({
   navCollapsedSize,
 }) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
-  const [mail, setMail] = useMail();
-  const [searchQuery, setSearchQuery] = React.useState("");
   const [labelFilters, setLabelFilters] = React.useState([]);
   const [tasks, setTasks] = React.useState([]);
   const [emailFilter, setEmailFilter] = React.useState("");
@@ -74,7 +79,7 @@ const Mail = ({
     setSelectedMailId(row.original.id);
   };
 
-  const labels = mails.map((mail) => mail.labels);
+  const labels = tasks.map((mail) => mail.labels);
 
   const uniqueLabels = labels.reduce((acc, labelArray) => {
     labelArray.forEach((label) => {
@@ -145,7 +150,7 @@ const Mail = ({
           collapsedSize={navCollapsedSize}
           collapsible={true}
           minSize={15}
-          maxSize={20}
+          maxSize={16}
           onCollapse={() => {
             setIsCollapsed(true);
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
@@ -180,7 +185,7 @@ const Mail = ({
             links={[
               {
                 title: "Inbox",
-                label: `${mails.length}`,
+                label: `${tasks.length}`,
                 icon: Inbox,
                 variant: "default",
               },
@@ -199,14 +204,40 @@ const Mail = ({
             ]}
           />
           <Separator />
-          <NavbarFilters
-            labels={uniqueLabelsArray}
-            accounts={accounts}
-            onFilterChange={handleFilterChange}
-            onEmailFilterChange={handleEmailFilterChange}
-            onCampaignFilterChange={handleCampaignFilterChange}
-            isCollapsed={isCollapsed}
-          />
+          {isCollapsed ? (
+            <Nav
+              isCollapsed={isCollapsed}
+              links={[
+                {
+                  title: "Label Filter",
+                  label: ``,
+                  icon: Tags,
+                  variant: "ghost",
+                },
+                {
+                  title: "Campaign Filter",
+                  label: "",
+                  icon: ListOrdered,
+                  variant: "ghost",
+                },
+                {
+                  title: "Account Filter",
+                  label: "",
+                  icon: CircleUserRound,
+                  variant: "ghost",
+                },
+              ]}
+            />
+          ) : (
+            <NavbarFilters
+              labels={uniqueLabelsArray}
+              accounts={accounts}
+              onFilterChange={handleFilterChange}
+              onEmailFilterChange={handleEmailFilterChange}
+              onCampaignFilterChange={handleCampaignFilterChange}
+              isCollapsed={isCollapsed}
+            />
+          )}
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel
@@ -254,15 +285,18 @@ const Mail = ({
           </Tabs>
         </ResizablePanel>
         {isMailDisplayOpen && (
-          <ResizablePanel
-            defaultSize={defaultLayout[2]}
-            minSize={28}
-          >
-            <MailDisplay
-              mail={tasks.find((item) => item.id === selectedMailId) || null}
-              onClose={closeMailDisplay}
-            />
-          </ResizablePanel>
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel
+              defaultSize={defaultLayout[2]}
+              minSize={28}
+            >
+              <MailDisplay
+                mail={tasks.find((item) => item.id === selectedMailId) || null}
+                onClose={closeMailDisplay}
+              />
+            </ResizablePanel>
+          </>
         )}
       </ResizablePanelGroup>
     </TooltipProvider>

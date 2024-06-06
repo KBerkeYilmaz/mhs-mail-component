@@ -3,8 +3,6 @@ import {
   Check as CheckIcon,
   CirclePlus as PlusCircledIcon,
 } from "lucide-react";
-import { Column } from "@tanstack/react-table";
-
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

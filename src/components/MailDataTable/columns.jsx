@@ -71,29 +71,12 @@ export const columns = [
       // const labels = row.getValue("labels");
       return (
         <div className="flex flex-col gap-1 justify-start items-start ">
-          {/* {labels.map((label) => (
-            <Badge
-              key={label}
-              variant="outline"
-            >
-              {label}
-            </Badge>
-          ))} */}
           <span className="max-w-[200px] font-medium">
             {row.getValue("name")}
           </span>
-          {/* <span className="max-w-[200px] font-medium">
-            {row.getValue("email")}
-          </span> */}
           <span className="max-w-[200px] text-xs font-semibold">
             {row.getValue("subject")}
           </span>
-          {/* <span>
-            {!row.getValue("read") && (
-              <span className="flex h-2 w-2 rounded-full bg-blue-600" />
-            )}
-
-          </span> */}
         </div>
       );
     },
@@ -113,11 +96,11 @@ export const columns = [
       const labels = row.getValue("labels");
       const text = row.getValue("text");
       const truncatedText =
-        text.length > 100 ? `${text.substring(0, 80)}...` : text;
+        text.length > 100 ? `${text.substring(0, 100)}...` : text;
 
       return (
-        <div className="w-full flex flex-col gap-2">
-          <span className="text-sm">{truncatedText}</span>
+        <div className="flex flex-col w-full gap-2">
+          <span>{truncatedText}</span>
           {labels.length ? (
             <div className="flex w-full items-start gap-2">
               {labels.map((label) => (
@@ -130,27 +113,6 @@ export const columns = [
               ))}
             </div>
           ) : null}
-        </div>
-      );
-    },
-    enableSorting: true,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "date",
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title="Date"
-        className={"hidden"}
-      />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="w-full">
-          {formatDistanceToNow(new Date(row.getValue("date")), {
-            addSuffix: true,
-          })}
         </div>
       );
     },
@@ -188,6 +150,31 @@ export const columns = [
     enableHiding: false,
   },
   {
+    accessorKey: "date",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Date"
+        className={"hidden"}
+      />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="w-full">
+          {formatDistanceToNow(new Date(row.getValue("date")), {
+            addSuffix: true,
+          })}
+        </div>
+      );
+    },
+    enableSorting: true,
+    enableHiding: false,
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <DataTableRowActions row={row} />,
+  },
+  {
     accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -201,9 +188,5 @@ export const columns = [
     },
     enableSorting: true,
     enableHiding: false,
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
+  }
 ];

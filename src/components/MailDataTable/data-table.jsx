@@ -57,14 +57,14 @@ export function DataTable({ columns, data }) {
   });
 
   return (
-    <div className="space-y-4 p-2">
+    <div className="space-y-4 p-2 ">
       <DataTableToolbar table={table} />
       <DataTablePagination table={table} />
 
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <div>
+        <ScrollArea className="h-[70vh]">
+          <Table>
+            <TableHeader className="sticky">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
@@ -84,44 +84,39 @@ export function DataTable({ columns, data }) {
                   })}
                 </TableRow>
               ))}
-            </div>
-          </TableHeader>
-
-          <TableBody>
-            <div className="relative rounded-md border">
-              <ScrollArea className="h-[80vh]">
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      onClick={() => handleRowClick(row)}
-                      className="cursor-pointer"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center min-w-[79vw]"
-                    >
-                      No results.
-                    </TableCell>
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={() => handleRowClick(row)}
+                    className="cursor-pointer"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
                   </TableRow>
-                )}
-              </ScrollArea>
-            </div>
-          </TableBody>
-        </Table>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center min-w-[79vw]"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </ScrollArea>
       </div>
     </div>
   );

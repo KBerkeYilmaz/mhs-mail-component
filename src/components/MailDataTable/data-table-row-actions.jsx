@@ -1,8 +1,6 @@
 "use client"
 
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
-import { Row } from "@tanstack/react-table"
-
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -19,7 +17,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { labels } from "./data/data"
-import tasks from "./data/tasks.json"
 
 function parseTask(task) {
     const validTask = {
