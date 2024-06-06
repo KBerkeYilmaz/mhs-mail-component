@@ -5,15 +5,22 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Search, Tags, CircleUserRound, ListOrdered, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Search, Tags, CircleUserRound, ListOrdered } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-const NavbarFilters = ({ labels, accounts, onFilterChange }) => {
+const NavbarFilters = ({
+  labels,
+  accounts,
+  onFilterChange,
+  onEmailFilterChange,
+  onCampaignFilterChange,
+  isCollapsed,
+}) => {
   const [selectedLabels, setSelectedLabels] = React.useState([]);
   const [searchLabel, setSearchLabel] = React.useState("");
+  const [searchEmail, setSearchEmail] = React.useState("");
+  const [searchCampaign, setSearchCampaign] = React.useState("");
 
   const handleLabelChange = (event) => {
     const { value, checked } = event.target;
@@ -26,8 +33,16 @@ const NavbarFilters = ({ labels, accounts, onFilterChange }) => {
     onFilterChange(selectedLabels);
   }, [selectedLabels]);
 
-  const handleSearchLabelChange = (event) => {
-    setSearchLabel(event.target.value);
+  const handleSearchEmailChange = (event) => {
+    const { value } = event.target;
+    setSearchEmail(value);
+    onEmailFilterChange(value);
+  };
+
+  const handleSearchCampaignChange = (event) => {
+    const { value } = event.target;
+    setSearchCampaign(value);
+    onCampaignFilterChange(value);
   };
 
   const filteredLabels = labels.filter((label) =>
@@ -37,59 +52,52 @@ const NavbarFilters = ({ labels, accounts, onFilterChange }) => {
   return (
     <>
       <div className="bg-background/95 px-4 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <Accordion
-          type="single"
-          collapsible
-        >
-          <AccordionItem
-            value="item-1"
-            className="relative"
+        {!isCollapsed ? (
+          <Accordion
+            type="single"
+            collapsible
           >
-            <AccordionTrigger>
-              <Tags className="absolute left-2 top-4.5 h-4 w-4 text-muted-foreground" />
-              <span className="pl-8 text-sm">Filter by label</span>
-            </AccordionTrigger>
-            <AccordionContent>
-              <form>
-                {/* <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search"
-                    className="pl-8 pr-8"
-                    value={searchLabel}
-                    onChange={handleSearchLabelChange}
-                  />
-                  <X
-                    className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground cursor-pointer"
-                    onClick={() => setSearchLabel("")}
-                  />
-                </div> */}
-                <div>
-                  {filteredLabels.map((label, index) => (
-                    <div
-                      key={`label-${label.label}`}
-                      className="flex items-center gap-2"
-                    >
-                      <Input
+            <AccordionItem
+              value="item-1"
+              className="relative"
+            >
+              <AccordionTrigger>
+                <Tags className="absolute left-2 top-4.5 h-4 w-4 text-muted-foreground" />
+                <span className="pl-8 text-sm">Filter by label</span>
+              </AccordionTrigger>
+              <AccordionContent>
+                <form>
+                  <div>
+                    {filteredLabels.map((label, index) => (
+                      <div
+                        key={`label-${label.label}`}
+                        className="flex items-center gap-2"
+                      >
+                        <Input
                         type="checkbox"
                         id={`label-${label.label}`}
                         name={label.label}
                         value={label.label}
                         className="w-4"
+                        checked={selectedLabels.includes(label.label)}
                         onChange={handleLabelChange}
-                      />
-                      <Label htmlFor={`label-${label.label}`}>
-                        {label.label} ({label.count})
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </form>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+                        />
+                        <Label htmlFor={`label-${label.label}`}>
+                          {label.label} ({label.count})
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </form>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        ) : (
+          <Tags className="absolute left-7 top-8 h-6 w-5 text-foreground" />
+        )}
       </div>
       <div className="bg-background/95 px-4 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        {!isCollapsed ? (
         <Accordion
           type="single"
           collapsible
@@ -109,14 +117,19 @@ const NavbarFilters = ({ labels, accounts, onFilterChange }) => {
                   <Input
                     placeholder="Search"
                     className="pl-8"
+                    value={searchCampaign}
+                    onChange={handleSearchCampaignChange}
                   />
                 </div>
               </form>
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion>) :
+        <ListOrdered className="absolute left-7 top-14 h-6 w-5 text-foreground" />
+      }
       </div>
       <div className="bg-background/95 px-4 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        {!isCollapsed ? (
         <Accordion
           type="single"
           collapsible
@@ -127,7 +140,7 @@ const NavbarFilters = ({ labels, accounts, onFilterChange }) => {
           >
             <AccordionTrigger>
               <CircleUserRound className="absolute left-2 top-4.5 h-4 w-4 text-muted-foreground" />
-              <span className="pl-8 text-sm">Filter by account</span>
+              <span className="pl-8 text-sm">Filter by email</span>
             </AccordionTrigger>
             <AccordionContent>
               <form>
@@ -136,25 +149,16 @@ const NavbarFilters = ({ labels, accounts, onFilterChange }) => {
                   <Input
                     placeholder="Search"
                     className="pl-8"
+                    value={searchEmail}
+                    onChange={handleSearchEmailChange}
                   />
                 </div>
-                {/* <div>
-                  {accounts.map((account, index) => (
-                    <div key={`account-${account}`}>
-                      <input
-                        type="checkbox"
-                        id={`account-${account}`}
-                        name={account}
-                        value={account}
-                      />
-                      <label htmlFor={`account-${account}`}>{account}</label>
-                    </div>
-                  ))}
-                </div> */}
               </form>
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion>) :
+        <CircleUserRound className="absolute left-7 top-20 h-6 w-5 text-foreground" />
+      }
       </div>
     </>
   );

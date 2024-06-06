@@ -64,7 +64,7 @@ export function DataTable({ columns, data }) {
   });
 
   return (
-    <div>
+    <>
       <div className="flex w-full items-center justify-between gap-4 pb-4">
         <div className="flex w-full items-center justify-start gap-4">
           <DropdownMenu>
@@ -128,7 +128,7 @@ export function DataTable({ columns, data }) {
       <div className="relative rounded-md border">
         <ScrollArea className="h-[70vh]">
           <Table>
-            <TableHeader className="bg-slate-50">
+            <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow
                   key={headerGroup.id}
@@ -155,12 +155,9 @@ export function DataTable({ columns, data }) {
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="cursor-pointer bg-white transition-colors hover:bg-slate-50"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                      >
+                      <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -173,7 +170,7 @@ export function DataTable({ columns, data }) {
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-18 bg-slate-50 text-center"
+                    className="h-18 bg-slate-50 text-center w-50"
                   >
                     No results.
                   </TableCell>
@@ -183,6 +180,6 @@ export function DataTable({ columns, data }) {
           </Table>
         </ScrollArea>
       </div>
-    </div>
+    </>
   );
 }

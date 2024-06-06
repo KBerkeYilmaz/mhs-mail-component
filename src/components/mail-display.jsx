@@ -42,10 +42,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Mail } from "@/data/mails"
 
 
-export function MailDisplay({ mail }) {
+export function MailDisplay({ mail, onClose }) {
   const today = new Date()
 
   return (
@@ -184,6 +183,8 @@ export function MailDisplay({ mail }) {
             <DropdownMenuItem>Mute thread</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <button onClick={onClose} className="close-button">X</button>
+
       </div>
       <Separator />
       {mail ? (

@@ -1,4 +1,3 @@
-import { LucideIcon } from "lucide-react"
 import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"

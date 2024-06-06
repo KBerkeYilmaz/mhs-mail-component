@@ -20,8 +20,7 @@ export default function Home() {
   }, []);
 
   return (
-    <>
-      <div className="hidden flex-col md:flex max-w-screen max-h-screen overflow-hidden">
+      <div className="hidden flex-col md:flex overflow-hidden max-h-screen">
         <Mail
           accounts={accounts}
           mails={mails}
@@ -30,6 +29,5 @@ export default function Home() {
           navCollapsedSize={4}
         />
       </div>
-    </>
   );
 }
