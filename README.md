@@ -19,7 +19,7 @@ You may also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+<!-- ### `npm run build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
@@ -245,4 +245,4 @@ Launch takes all available data to map related information to the screen.
 
 To check the available data, simply use leads and sequences objects. 
 
-I've left other settings without any functionality, as per design they belong to campaign settings and I don't know how you guys want to use those settings. But settings for schedules etc. are available. I have not included them in a persistent store. 
+I've left other settings without any functionality, as per design they belong to campaign settings and I don't know how you guys want to use those settings. But settings for schedules etc. are available. I have not included them in a persistent store.  -->
